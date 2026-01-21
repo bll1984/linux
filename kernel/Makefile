@@ -17,12 +17,12 @@ obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 
 ifdef CONFIG_FUNCTION_TRACER
 # Do not trace internal ftrace files
-CFLAGS_REMOVE_irq_work.o = $(CC_FLAGS_FTRACE)
+CFLAGS_REMOVE_irq_work.o = $(CC_FLAGS_FTRACE) -march=native -1024 -flto -pipe
 endif
 
 # Branch profiling isn't noinstr-safe
 ifdef CONFIG_TRACE_BRANCH_PROFILING
-CFLAGS_context_tracking.o += -DDISABLE_BRANCH_PROFILING
+CFLAGS_context_tracking.o += -DDISABLE_BRANCH_PROFILING -march=native -1024 -flto -pipe
 endif
 
 # Prevents flicker of uninteresting __do_softirq()/__local_bh_disable_ip()
@@ -43,7 +43,7 @@ KASAN_SANITIZE_kcov.o := n
 KCSAN_SANITIZE_kcov.o := n
 UBSAN_SANITIZE_kcov.o := n
 KMSAN_SANITIZE_kcov.o := n
-CFLAGS_kcov.o := $(call cc-option, -fno-conserve-stack) -fno-stack-protector
+CFLAGS_kcov.o := $(call cc-option, -fno-conserve-stack) -fno-stack-protector -march=native -1024 -flto -pipe
 
 obj-y += sched/
 obj-y += locking/
@@ -140,8 +140,8 @@ obj-$(CONFIG_WATCH_QUEUE) += watch_queue.o
 obj-$(CONFIG_RESOURCE_KUNIT_TEST) += resource_kunit.o
 obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
 
-CFLAGS_kstack_erase.o += $(DISABLE_KSTACK_ERASE)
-CFLAGS_kstack_erase.o += $(call cc-option,-mgeneral-regs-only)
+CFLAGS_kstack_erase.o += $(DISABLE_KSTACK_ERASE) -march=native -O3 -flto -pipe
+CFLAGS_kstack_erase.o += $(call cc-option,-mgeneral-regs-only) -march=native -1024 -flto -pipe
 obj-$(CONFIG_KSTACK_ERASE) += kstack_erase.o
 KASAN_SANITIZE_kstack_erase.o := n
 KCSAN_SANITIZE_kstack_erase.o := n
